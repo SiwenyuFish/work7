@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.spring.core.beans.BeansException;
 import com.spring.core.beans.PropertyValue;
 import com.spring.core.beans.factory.AutowiredCapableBeanFactory;
+import com.spring.core.beans.factory.BeanFactoryAware;
 import com.spring.core.beans.factory.config.*;
 
 import java.lang.reflect.Method;
@@ -30,9 +31,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throw new BeansException("实例化失败", e);
         }
 
-        registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
-
-        registerSingleton(beanName, bean);
+        if(beanDefinition.isSingleton()) {
+            //只有单例才注册销毁方法
+            registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
+            registerSingleton(beanName, bean);
+        }
         return bean;
     }
 
@@ -44,6 +47,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     protected Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+
+        if (bean instanceof BeanFactoryAware) {
+            ((BeanFactoryAware) bean).setBeanFactory(this);
+        }
+
+        if (bean instanceof BeanNameAware) {
+            ((BeanNameAware) bean).setBeanName(beanName);
+        }
 
         //执行BeanPostProcessor的前置处理
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);

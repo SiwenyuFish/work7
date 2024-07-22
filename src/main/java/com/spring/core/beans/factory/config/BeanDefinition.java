@@ -64,4 +64,11 @@ public class BeanDefinition {
     public String getDestroyMethodName() {
         return destroyMethodName;
     }
+
+    public boolean isSingleton() {
+        return singleton;
+    }
+    public boolean isPrototype() {
+        return prototype;
+    }
 }
