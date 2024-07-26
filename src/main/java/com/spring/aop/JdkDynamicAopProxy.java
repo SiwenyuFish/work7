@@ -9,10 +9,12 @@ public class JdkDynamicAopProxy implements InvocationHandler,AopProxy {
 
     private ProxyFactory proxyFactory;
     private Object target;
+    private MethodInterceptor interceptor;
 
     public JdkDynamicAopProxy(ProxyFactory proxyFactory) {
        this.proxyFactory = proxyFactory;
        this.target = proxyFactory.getTarget();
+       this.interceptor = proxyFactory.getInterceptor();
     }
 
     @Override
@@ -23,7 +25,7 @@ public class JdkDynamicAopProxy implements InvocationHandler,AopProxy {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return proxyFactory.getInterceptor().invoke(new ReflectiveMethodInvocation(target, method, args));
+        return interceptor.invoke(new ReflectiveMethodInvocation(target, method, args));
     }
 
     private static class ReflectiveMethodInvocation implements MethodInvocation {

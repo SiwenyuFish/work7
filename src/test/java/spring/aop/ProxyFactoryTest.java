@@ -1,8 +1,6 @@
 package spring.aop;
 
-import com.spring.aop.MethodInterceptor;
-import com.spring.aop.MethodInvocation;
-import com.spring.aop.ProxyFactory;
+import com.spring.aop.*;
 import org.junit.Test;
 
 public class ProxyFactoryTest {
@@ -20,7 +18,7 @@ public class ProxyFactoryTest {
     @Test
    public void testProxyFactory() {
         JdkService target = new JdkServiceImpl();
-        ProxyFactory proxyFactory = new ProxyFactory(target, new LoggingInterceptor());
+        ProxyFactory proxyFactory = new ProxyFactory(target,new LoggingInterceptor());
         JdkService proxy = (JdkService) proxyFactory.getProxy();
         proxy.jdkMethod();
 
@@ -29,9 +27,23 @@ public class ProxyFactoryTest {
     @Test
     public void testProxyFactory2() {
        MyService target = new MyService();
-       ProxyFactory proxyFactory = new ProxyFactory(target, new LoggingInterceptor());
+       ProxyFactory proxyFactory = new ProxyFactory(target,new LoggingInterceptor());
        MyService proxy = (MyService) proxyFactory.getProxy();
        proxy.myMethod();
+    }
+
+    @Test
+    public void testProxyFactory3() {
+        MyService target = new MyService();
+        LoggingAspect aspect = new LoggingAspect();
+
+        ProxyFactory proxyFactory = new ProxyFactory(target);
+        proxyFactory.addAspect(aspect);
+
+        MyService proxy = (MyService) proxyFactory.getProxy();
+
+        // 调用代理方法
+        proxy.myMethod();
     }
 
 
