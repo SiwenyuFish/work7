@@ -48,12 +48,14 @@ public class ProxyFactory {
                 if (method.isAnnotationPresent(Before.class)) {
                     Before before = method.getAnnotation(Before.class);
                     AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut(before.value());
-                    advisors.add(new Advisor(new BeforeAdvice(aspect, method), pointcut));
+                    if(pointcut.matches(target.getClass()))
+                        advisors.add(new Advisor(new BeforeAdvice(aspect, method), pointcut));
                 }
                 if (method.isAnnotationPresent(After.class)) {
                     After after = method.getAnnotation(After.class);
                     AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut(after.value());
-                    advisors.add(new Advisor(new AfterAdvice(aspect, method), pointcut));
+                    if(pointcut.matches(target.getClass()))
+                        advisors.add(new Advisor(new AfterAdvice(aspect, method), pointcut));
                 }
             }
         }
@@ -106,6 +108,10 @@ public class ProxyFactory {
 
     public MethodInterceptor getInterceptor() {
         return interceptor;
+    }
+
+    public List<Advisor> getAdvisors() {
+        return advisors;
     }
 }
 

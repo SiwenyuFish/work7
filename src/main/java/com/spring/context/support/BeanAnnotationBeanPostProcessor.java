@@ -1,10 +1,12 @@
-package com.spring.core.beans.factory.annotation;
+package com.spring.context.support;
 
 import cn.hutool.core.util.StrUtil;
 import com.spring.core.beans.BeansException;
 import com.spring.core.beans.PropertyValue;
 import com.spring.core.beans.PropertyValues;
 import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
+import com.spring.core.beans.factory.annotation.Bean;
+import com.spring.core.beans.factory.annotation.Configuration;
 import com.spring.core.beans.factory.config.BeanDefinition;
 import com.spring.core.beans.factory.config.BeanFactoryPostProcessor;
 import com.spring.core.beans.factory.config.BeanReference;
@@ -18,6 +20,17 @@ public class BeanAnnotationBeanPostProcessor implements BeanFactoryPostProcessor
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
+        for (String beanDefinitionName : beanFactory.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);
+            try {
+                Class<?> beanClass = beanDefinition.getBeanClass();
+                if (beanClass.isAnnotationPresent(Configuration.class)) {
+                    processBeanDefinitions(beanFactory,beanClass);
+                }
+            } catch (Exception e) {
+                System.out.println("Annotation Exception");
+            }
+        }
     }
 
     public void processBeanDefinitions(ConfigurableListableBeanFactory beanFactory,Class<?>... configClasses) {

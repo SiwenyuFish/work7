@@ -3,8 +3,6 @@ package com.spring.aop;
 import org.aspectj.weaver.tools.PointcutExpression;
 import org.aspectj.weaver.tools.PointcutParser;
 import org.aspectj.weaver.tools.PointcutPrimitive;
-
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,8 +17,9 @@ public class AspectJExpressionPointcut {
         pointcutExpression = pointcutParser.parsePointcutExpression(expression);
     }
 
-    public boolean matches(Method method, Class<?> targetClass) {
-        return pointcutExpression.matchesMethodExecution(method).alwaysMatches();
+
+    public boolean matches(Class<?> clazz) {
+        return pointcutExpression.couldMatchJoinPointsInType(clazz);
     }
 }
 

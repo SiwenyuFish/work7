@@ -7,6 +7,7 @@ import com.spring.core.beans.BeansException;
 import com.spring.core.beans.PropertyValue;
 import com.spring.core.beans.factory.AutowiredCapableBeanFactory;
 import com.spring.core.beans.factory.BeanFactoryAware;
+import com.spring.core.beans.factory.ObjectFactory;
 import com.spring.core.beans.factory.config.*;
 
 import java.lang.reflect.Method;
@@ -24,6 +25,18 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object bean = null;
         try {
             bean = createBeanInstance(beanDefinition);
+
+            //为解决循环依赖问题，将实例化后的bean放进缓存中提前暴露
+            if (beanDefinition.isSingleton()) {
+                Object finalBean = bean;
+                addSingletonFactory(beanName, new ObjectFactory<Object>() {
+                    @Override
+                    public Object getObject() throws BeansException {
+                        return getEarlyBeanReference(beanName, beanDefinition, finalBean);
+                    }
+                });
+            }
+
             applyPropertyValues(beanName,bean,beanDefinition);
             bean = initializeBean(beanName,bean,beanDefinition);
 
@@ -34,9 +47,31 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         if(beanDefinition.isSingleton()) {
             //只有单例才注册销毁方法
             registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
-            registerSingleton(beanName, bean);
+            //registerSingleton(beanName, bean);
         }
-        return bean;
+
+        Object exposedObject = bean;
+
+        if (beanDefinition.isSingleton()) {
+            //如果有代理对象，此处获取代理对象
+            exposedObject = getSingleton(beanName);
+            registerSingleton(beanName, exposedObject);
+        }
+        return exposedObject;
+    }
+
+    protected Object getEarlyBeanReference(String beanName, BeanDefinition beanDefinition, Object bean) {
+        Object exposedObject = bean;
+        for (BeanPostProcessor bp : getBeanPostProcessors()) {
+            if (bp instanceof InstantiationAwareBeanPostProcessor) {
+                exposedObject = ((InstantiationAwareBeanPostProcessor) bp).getEarlyBeanReference(exposedObject, beanName);
+                if (exposedObject == null) {
+                    return exposedObject;
+                }
+            }
+        }
+
+        return exposedObject;
     }
 
     protected void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {

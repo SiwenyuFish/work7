@@ -1,9 +1,8 @@
 package spring.context;
 
-import com.spring.core.beans.factory.annotation.BeanAnnotationBeanPostProcessor;
+import com.spring.context.support.BeanAnnotationBeanPostProcessor;
 import com.spring.core.beans.factory.support.DefaultListableBeanFactory;
 import org.junit.Test;
-import spring.bean.Bean1;
 import spring.bean.Config;
 
 public class BeanAnnotationTest {

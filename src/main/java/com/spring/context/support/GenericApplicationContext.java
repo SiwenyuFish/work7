@@ -7,6 +7,8 @@ import com.spring.core.beans.factory.config.BeanDefinitionRegistry;
 import com.spring.core.beans.factory.config.BeanPostProcessor;
 import com.spring.core.beans.factory.support.DefaultListableBeanFactory;
 
+import java.util.function.Supplier;
+
 public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {
 
     private final DefaultListableBeanFactory beanFactory;
@@ -18,6 +20,10 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
     @Override
     public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) throws BeansException {
         this.beanFactory.registerBeanDefinition(beanName, beanDefinition);
+    }
+
+    public final <T> void registerBean(Class<T> beanClass) {
+        beanFactory.registerBeanDefinition(beanClass.getSimpleName(), new BeanDefinition(beanClass));
     }
 
     public final ConfigurableListableBeanFactory getBeanFactory() {
