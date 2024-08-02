@@ -1,7 +1,6 @@
 package com.spring.web.servlet.method.annotation;
 
-import com.spring.web.annotation.Controller;
-import com.spring.web.annotation.RequestMapping;
+import com.spring.web.annotation.*;
 import com.spring.web.servlet.HandlerMapping;
 import com.spring.web.servlet.method.HandlerMethod;
 import com.spring.web.servlet.HandlerExecutionChain;
@@ -18,7 +17,8 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     public RequestMappingHandlerMapping() {
         // 扫描所有控制器，找到@RequestMapping注解的方法并注册
-        detectHandlers("com.spring.mvc.controller");
+        detectHandlers("com.spring.web.controller");
+        detectHandlers("spring.web.controller");
     }
 
     private void detectHandlers(String basePackage) {
@@ -39,13 +39,14 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
                 try {
                     Class<?> clazz = Class.forName(className);
                     if (clazz.isAnnotationPresent(Controller.class)) {
-                        // 找到控制器类，遍历其方法
                         for (Method method : clazz.getDeclaredMethods()) {
-                            if (method.isAnnotationPresent(RequestMapping.class)) {
-                                // 找到@RequestMapping注解的方法
-                                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                                String path = "/spring_war"+requestMapping.value();
-                                handlerMethods.put(path, new HandlerMethod(clazz.newInstance(), method));
+                            // 检查是否有 @RequestMapping 注解
+                            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                            if (requestMapping != null) {
+                                registerHandlerMethod(method, requestMapping);
+                            } else {
+                                // 检查派生注解
+                                checkAndRegisterDerivedAnnotations(method, clazz);
                             }
                         }
                     }
@@ -56,9 +57,37 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         }
     }
 
+    private void checkAndRegisterDerivedAnnotations(Method method, Class<?> clazz) throws Exception {
+        if (method.isAnnotationPresent(GetMapping.class)) {
+            GetMapping annotation = method.getAnnotation(GetMapping.class);
+            registerHandlerMethod(method, new String[]{annotation.value()}, "GET", clazz);
+        } else if (method.isAnnotationPresent(PostMapping.class)) {
+            PostMapping annotation = method.getAnnotation(PostMapping.class);
+            registerHandlerMethod(method, new String[]{annotation.value()}, "POST", clazz);
+        } else if (method.isAnnotationPresent(PutMapping.class)) {
+            PutMapping annotation = method.getAnnotation(PutMapping.class);
+            registerHandlerMethod(method, new String[]{annotation.value()}, "PUT", clazz);
+        } else if (method.isAnnotationPresent(DeleteMapping.class)) {
+            DeleteMapping annotation = method.getAnnotation(DeleteMapping.class);
+            registerHandlerMethod(method, new String[]{annotation.value()}, "DELETE", clazz);
+        }
+    }
+
+    private void registerHandlerMethod(Method method, String[] paths, String methodType, Class<?> clazz) throws Exception {
+        String path = paths.length > 0 ? paths[0] : ""; // 使用第一个路径
+        handlerMethods.put(path, new HandlerMethod(clazz.newInstance(), method));
+    }
+
+    private void registerHandlerMethod(Method method, RequestMapping requestMapping) throws Exception {
+        String path = requestMapping.value().length > 0 ? requestMapping.value()[0] : "";
+        String methodType = requestMapping.method().length > 0 ? requestMapping.method()[0] : "";
+        handlerMethods.put(path, new HandlerMethod(method.getDeclaringClass().newInstance(), method));
+    }
+
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) {
         String path = request.getRequestURI();
+        String methodType = request.getMethod();
         HandlerMethod handlerMethod = handlerMethods.get(path);
         if (handlerMethod != null) {
             return new HandlerExecutionChain(handlerMethod);

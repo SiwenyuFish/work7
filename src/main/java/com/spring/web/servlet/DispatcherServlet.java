@@ -46,8 +46,11 @@ public class DispatcherServlet extends HttpServlet {
         try {
             // 1. 查找Handler
             handlerChain = handlerMapping.getHandler(req);
+
             if (handlerChain == null) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                System.out.println(req.getRequestURI());
+                System.out.println("404 not found");
                 return;
             }
 
@@ -57,7 +60,7 @@ public class DispatcherServlet extends HttpServlet {
             }
 
             // 3. 处理请求
-            ModelAndView mv = handlerAdapter.handle(req, resp, handlerChain.getHandler());
+            ModelAndView mv = handlerAdapter.invokeHandlerMethod(req, resp, handlerChain.getHandler());
 
             // 4. 视图解析
             if (mv != null) {
