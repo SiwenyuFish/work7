@@ -1,6 +1,7 @@
 package com.spring.core.beans.factory.support;
 
 import com.spring.core.beans.BeansException;
+import com.spring.core.beans.factory.BeanFactory;
 import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
 import com.spring.core.beans.factory.config.BeanDefinition;
 import com.spring.core.beans.factory.config.BeanDefinitionRegistry;
@@ -15,6 +16,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     private final Map<String, BeanDefinition> beanDefinitionMap;
 
     public DefaultListableBeanFactory() {
+        this.beanDefinitionMap = new ConcurrentHashMap(256);
+    }
+
+    public DefaultListableBeanFactory(BeanFactory parentBeanFactory) {
+        super(parentBeanFactory);
         this.beanDefinitionMap = new ConcurrentHashMap(256);
     }
 
@@ -55,5 +61,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             }
         });
         return result;
+    }
+
+    @Override
+    protected boolean containsBeanDefinition(String beanName) {
+        return this.beanDefinitionMap.containsKey(beanName);
     }
 }

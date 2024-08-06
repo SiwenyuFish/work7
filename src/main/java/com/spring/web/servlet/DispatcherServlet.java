@@ -1,5 +1,8 @@
 package com.spring.web.servlet;
 
+import com.spring.context.config.ApplicationContext;
+import com.spring.context.config.ApplicationContextAware;
+import com.spring.core.beans.BeansException;
 import com.spring.web.servlet.method.annotation.RequestMappingHandlerMapping;
 import com.spring.web.servlet.method.annotation.RequestMappingHandlerAdapter;
 
@@ -9,9 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class DispatcherServlet extends HttpServlet {
+public class DispatcherServlet extends HttpServlet implements ApplicationContextAware {
 
-    //private Map<String, HttpServlet> handlerMapping = new HashMap<>();
 
     private HandlerMapping handlerMapping;
     private HandlerAdapter handlerAdapter;
@@ -20,8 +22,6 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        // 初始化控制器映射，假设 HelloController 映射到 /hello
-        //handlerMapping.put("/spring_war/hello", new HelloController());
 
         // 初始化HandlerMapping、HandlerAdapter、ViewResolver等
         this.handlerMapping = new RequestMappingHandlerMapping();
@@ -34,13 +34,6 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        String uri = req.getRequestURI();
-//        HttpServlet controller = handlerMapping.get(uri);
-//        if (controller != null) {
-//            controller.service(req, resp);
-//        } else {
-//            resp.sendError(HttpServletResponse.SC_NOT_FOUND, uri);
-//        }
 
         HandlerExecutionChain handlerChain = null;
         try {
@@ -88,6 +81,11 @@ public class DispatcherServlet extends HttpServlet {
         // 简单异常处理
         e.printStackTrace();
         resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "laoda");
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+
     }
 }
 

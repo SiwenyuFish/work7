@@ -1,5 +1,7 @@
 package com.spring.web.servlet.method;
 
+import com.spring.web.annotation.ResponseBody;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
@@ -36,5 +38,9 @@ public class MethodParameter {
 
     public <T extends java.lang.annotation.Annotation> T getParameterAnnotation(Class<T> annotationType) {
         return parameter.getAnnotation(annotationType);
+    }
+
+    public boolean hasMethodAnnotation(Class<? extends java.lang.annotation.Annotation> responseBodyClass) {
+        return method.isAnnotationPresent(responseBodyClass);
     }
 }

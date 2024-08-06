@@ -1,5 +1,6 @@
 package com.spring.context.support;
 
+import com.spring.context.config.ApplicationContext;
 import com.spring.core.beans.BeansException;
 import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
 import com.spring.core.beans.factory.config.BeanDefinition;
@@ -14,7 +15,16 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
     private final DefaultListableBeanFactory beanFactory;
 
     public GenericApplicationContext() {
-       this.beanFactory = new DefaultListableBeanFactory();
+        this.beanFactory = new DefaultListableBeanFactory();
+    }
+
+    public GenericApplicationContext(DefaultListableBeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
+
+    public GenericApplicationContext(ApplicationContext parent) {
+        this();
+        this.setParent(parent);
     }
 
     @Override

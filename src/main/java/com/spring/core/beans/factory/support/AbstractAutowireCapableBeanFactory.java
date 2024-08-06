@@ -6,15 +6,24 @@ import cn.hutool.core.util.StrUtil;
 import com.spring.core.beans.BeansException;
 import com.spring.core.beans.PropertyValue;
 import com.spring.core.beans.factory.AutowiredCapableBeanFactory;
+import com.spring.core.beans.factory.BeanFactory;
 import com.spring.core.beans.factory.BeanFactoryAware;
-import com.spring.core.beans.factory.ObjectFactory;
 import com.spring.core.beans.factory.config.*;
 
 import java.lang.reflect.Method;
 
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowiredCapableBeanFactory {
 
-    private InstantiationStrategy instantiationStrategy = new SimpleInstantiationStrategy();
+    private InstantiationStrategy instantiationStrategy;
+
+    public AbstractAutowireCapableBeanFactory() {
+        instantiationStrategy = new SimpleInstantiationStrategy();
+    }
+
+    public AbstractAutowireCapableBeanFactory(BeanFactory parentBeanFactory) {
+        this();
+        this.setParentBeanFactory(parentBeanFactory);
+    }
 
     @Override
     protected Object createBean(String beanName, BeanDefinition beanDefinition) throws BeansException {
@@ -29,12 +38,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             //为解决循环依赖问题，将实例化后的bean放进缓存中提前暴露
             if (beanDefinition.isSingleton()) {
                 Object finalBean = bean;
-                addSingletonFactory(beanName, new ObjectFactory<Object>() {
-                    @Override
-                    public Object getObject() throws BeansException {
-                        return getEarlyBeanReference(beanName, beanDefinition, finalBean);
-                    }
-                });
+                addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, beanDefinition, finalBean));
             }
 
             applyPropertyValues(beanName,bean,beanDefinition);

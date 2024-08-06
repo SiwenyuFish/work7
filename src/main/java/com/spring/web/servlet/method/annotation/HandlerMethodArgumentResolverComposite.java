@@ -26,10 +26,10 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
         HandlerMethodArgumentResolver resolver = getResolver(parameter);
         if (resolver != null) {
-            return resolver.resolveArgument(parameter, request, response);
+            return resolver.resolveArgument(parameter, request);
         }
         throw new IllegalArgumentException("No suitable resolver for parameter: " + parameter.getParameter().getName());
     }

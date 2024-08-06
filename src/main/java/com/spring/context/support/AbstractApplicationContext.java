@@ -1,7 +1,9 @@
 package com.spring.context.support;
 
+import com.spring.context.config.ApplicationContext;
 import com.spring.context.config.ConfigurableApplicationContext;
 import com.spring.core.beans.BeansException;
+import com.spring.core.beans.factory.BeanFactory;
 import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
 import com.spring.core.beans.factory.config.BeanFactoryPostProcessor;
 import com.spring.core.beans.factory.config.BeanPostProcessor;
@@ -11,6 +13,14 @@ import java.util.Map;
 
 public abstract class AbstractApplicationContext extends DefaultResourceLoader implements ConfigurableApplicationContext {
 
+    private ApplicationContext parent;
+
+    public AbstractApplicationContext(ApplicationContext parent) {
+        this.parent = parent;
+    }
+
+    public AbstractApplicationContext() {
+    }
 
     @Override
     public void refresh() throws BeansException, IllegalStateException{
@@ -87,6 +97,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
             }
         };
         Runtime.getRuntime().addShutdownHook(shutdownHook);
+    }
 
+    @Override
+    public BeanFactory getParentBeanFactory() {
+        return this.getParent();
+    }
+
+    @Override
+    public ApplicationContext getParent() {
+        return this.parent;
+    }
+
+    public void setParent(ApplicationContext parent) {
+        this.parent = parent;
     }
 }

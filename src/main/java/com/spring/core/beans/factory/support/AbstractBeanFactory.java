@@ -2,6 +2,7 @@ package com.spring.core.beans.factory.support;
 
 import com.spring.core.beans.BeansException;
 import com.spring.core.beans.factory.BeanFactory;
+import com.spring.core.beans.factory.HierarchicalBeanFactory;
 import com.spring.core.beans.factory.config.BeanDefinition;
 import com.spring.core.beans.factory.config.BeanPostProcessor;
 import com.spring.core.beans.factory.config.SingletonBeanRegistry;
@@ -9,9 +10,20 @@ import com.spring.core.beans.factory.config.SingletonBeanRegistry;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements SingletonBeanRegistry, BeanFactory {
+public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements SingletonBeanRegistry, HierarchicalBeanFactory {
 
-    private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
+    private final List<BeanPostProcessor> beanPostProcessors ;
+
+    private BeanFactory parentBeanFactory;
+
+    public AbstractBeanFactory() {
+        beanPostProcessors  = new ArrayList<>();
+    }
+
+    public AbstractBeanFactory(BeanFactory parentBeanFactory) {
+        this();
+        this.parentBeanFactory = parentBeanFactory;
+    }
 
     @Override
     public Object getBean(String name) throws BeansException {
@@ -20,7 +32,17 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             return bean;
         }
 
+        BeanFactory parentBeanFactory = this.getParentBeanFactory();
+
+        if(parentBeanFactory != null && !this.containsBeanDefinition(name)) {
+            if(parentBeanFactory instanceof AbstractBeanFactory) {
+               return parentBeanFactory.getBean(name);
+            }
+        }
+
         BeanDefinition beanDefinition = getBeanDefinition(name);
+
+
         return createBean(name, beanDefinition);
     }
 
@@ -45,6 +67,10 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     }
 
 
+
+    protected abstract boolean containsBeanDefinition(String beanName);
+
+
     @Override
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         //有则覆盖
@@ -56,4 +82,12 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         return this.beanPostProcessors;
     }
 
+    @Override
+    public BeanFactory getParentBeanFactory() {
+        return this.parentBeanFactory;
+    }
+
+    public void setParentBeanFactory(BeanFactory parentBeanFactory) {
+        this.parentBeanFactory = parentBeanFactory;
+    }
 }

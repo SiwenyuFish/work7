@@ -2,6 +2,7 @@ package com.spring.web.servlet.method.annotation;
 
 import com.spring.web.annotation.*;
 import com.spring.web.servlet.HandlerMapping;
+import com.spring.web.servlet.handler.AbstractHandlerMethodMapping;
 import com.spring.web.servlet.method.HandlerMethod;
 import com.spring.web.servlet.HandlerExecutionChain;
 
@@ -12,7 +13,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestMappingHandlerMapping implements HandlerMapping {
+public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping {
     private final Map<String, HandlerMethod> handlerMethods = new HashMap<>();
 
     public RequestMappingHandlerMapping() {

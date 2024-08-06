@@ -15,7 +15,7 @@ public class PathVariableArgumentResolver implements HandlerMethodArgumentResolv
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
         PathVariable pathVariable = parameter.getParameterAnnotation(PathVariable.class);
         String variableName = pathVariable.value();
         // 假设请求路径已经解析并存储在 request 的属性中

@@ -1,6 +1,8 @@
 package spring.web.controller;
 
 import com.spring.web.annotation.*;
+import spring.bean.Fish;
+import spring.bean.User;
 
 @Controller
 public class HomeController {
@@ -18,6 +20,12 @@ public class HomeController {
     @GetMapping("/users/{id}")
     public String getUser(@PathVariable("id") int id) {
         return "User ID: " + id;
+    }
+
+    @GetMapping("/uu/{id}")
+    @ResponseBody
+    public User uu(@PathVariable("id") int id) {
+        return new User("Dr",id); // 这将被JsonReturnValueHandler处理
     }
 
 }
