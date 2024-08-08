@@ -3,8 +3,10 @@ package com.spring.web.servlet;
 import com.spring.context.config.ApplicationContext;
 import com.spring.context.config.ApplicationContextAware;
 import com.spring.core.beans.BeansException;
+import com.spring.core.beans.factory.config.InitializingBean;
 import com.spring.web.servlet.method.annotation.RequestMappingHandlerMapping;
 import com.spring.web.servlet.method.annotation.RequestMappingHandlerAdapter;
+import com.spring.web.servlet.mvc.DefaultHandlerExceptionResolver;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,25 +14,75 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class DispatcherServlet extends HttpServlet implements ApplicationContextAware {
+
+public class DispatcherServlet extends HttpServlet implements ApplicationContextAware , InitializingBean {
 
 
     private HandlerMapping handlerMapping;
     private HandlerAdapter handlerAdapter;
+    private HandlerExceptionResolver handlerExceptionResolver;
     private ViewResolver viewResolver;
+    private ApplicationContext applicationContext;
 
 
     @Override
-    public void init() throws ServletException {
-
-        // 初始化HandlerMapping、HandlerAdapter、ViewResolver等
-        this.handlerMapping = new RequestMappingHandlerMapping();
-        this.handlerAdapter = new RequestMappingHandlerAdapter();
-        this.viewResolver = new ViewResolver();
-
-
-
+    public void afterPropertiesSet() throws Exception {
+        init();
     }
+
+    @Override
+    public void init() throws ServletException {
+        // 初始化HandlerMapping、HandlerAdapter、ViewResolver等
+        initHandlerMapping();
+        initHandlerAdapter();
+        initViewResolver();
+        initHandlerExceptionResolver();
+    }
+
+    private void initHandlerMapping() {
+        if(applicationContext != null) {
+            try {
+                this.handlerMapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
+            } catch (BeansException e) {
+                this.handlerMapping = new RequestMappingHandlerMapping();
+            }
+        }else
+            this.handlerMapping = new RequestMappingHandlerMapping();
+    }
+
+    private void initHandlerAdapter() {
+        if(applicationContext != null) {
+            try {
+                this.handlerAdapter = applicationContext.getBean(RequestMappingHandlerAdapter.class);
+            } catch (BeansException e) {
+                this.handlerAdapter = new RequestMappingHandlerAdapter();
+            }
+        }else
+            this.handlerAdapter = new RequestMappingHandlerAdapter();
+    }
+
+    private void initViewResolver() {
+        if(applicationContext != null) {
+            try {
+                this.viewResolver = applicationContext.getBean(ViewResolver.class);
+            } catch (BeansException e) {
+                this.viewResolver = new ViewResolver();
+            }
+        }else
+            this.viewResolver = new ViewResolver();
+    }
+
+    private void initHandlerExceptionResolver() {
+        if(applicationContext != null) {
+            try {
+                this.handlerExceptionResolver = applicationContext.getBean(DefaultHandlerExceptionResolver.class);
+            } catch (BeansException e) {
+                this.handlerExceptionResolver = new DefaultHandlerExceptionResolver();
+            }
+        }else
+            this.handlerExceptionResolver = new DefaultHandlerExceptionResolver();
+    }
+
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -64,7 +116,7 @@ public class DispatcherServlet extends HttpServlet implements ApplicationContext
             handlerChain.applyPostHandle(req, resp, mv);
         } catch (Exception e) {
             // 异常处理
-            processException(req, resp, e);
+           handlerExceptionResolver.resolveException(req,resp,null,e);
         } finally {
             // 清理资源或做最终的处理
             try {
@@ -77,15 +129,10 @@ public class DispatcherServlet extends HttpServlet implements ApplicationContext
         }
     }
 
-    private void processException(HttpServletRequest req, HttpServletResponse resp, Exception e) {
-        // 简单异常处理
-        e.printStackTrace();
-        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "laoda");
-    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-
+        this.applicationContext = applicationContext;
     }
 }
 

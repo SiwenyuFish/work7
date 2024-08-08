@@ -1,5 +1,12 @@
 package com.spring.web.servlet.method.annotation;
 
+import com.spring.context.config.ApplicationContext;
+import com.spring.context.config.ApplicationContextAware;
+import com.spring.core.beans.BeansException;
+import com.spring.core.beans.factory.BeanFactory;
+import com.spring.core.beans.factory.BeanFactoryAware;
+import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
+import com.spring.core.beans.factory.config.InitializingBean;
 import com.spring.web.servlet.ModelAndView;
 import com.spring.web.servlet.HandlerAdapter;
 import com.spring.web.servlet.method.HandlerMethod;
@@ -19,6 +26,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     private final HandlerMethodArgumentResolverComposite argumentResolvers = new HandlerMethodArgumentResolverComposite();
     private final HandlerMethodReturnValueHandlerComposite returnValueHandlers = new HandlerMethodReturnValueHandlerComposite();
 
+
     public RequestMappingHandlerAdapter() {
         // 添加参数解析器
         argumentResolvers.addResolver(new RequestParamArgumentResolver());
@@ -28,6 +36,8 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         returnValueHandlers.addHandler(new RequestResponseBodyMethodProcessor());
     }
 
+
+
     @Override
     public ModelAndView invokeHandlerMethod(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
@@ -36,7 +46,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         Object[] args = resolveArguments(request, response, method);
         Object result = method.invoke(handlerMethod.getController(), args);
         ModelAndViewContainer mav = new ModelAndViewContainer();
-        returnValueHandlers.handleReturnValue(result, new MethodParameter(handlerMethod.getMethod(), 0), mav, request, response);
+        returnValueHandlers.handleReturnValue(result, new MethodParameter(handlerMethod.getMethod()), mav, request, response);
         return mav.getModelAndView();
 
     }

@@ -64,5 +64,9 @@ public abstract class DefaultSingletonBeanRegistry implements SingletonBeanRegis
         }
     }
 
+    public boolean containsSingleton(String beanName) {
+        return this.singletonObjects.containsKey(beanName);
+    }
+
 
 }

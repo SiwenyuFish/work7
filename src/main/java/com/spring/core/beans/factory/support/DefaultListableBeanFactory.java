@@ -5,10 +5,9 @@ import com.spring.core.beans.factory.BeanFactory;
 import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
 import com.spring.core.beans.factory.config.BeanDefinition;
 import com.spring.core.beans.factory.config.BeanDefinitionRegistry;
+import com.spring.core.beans.factory.util.BeanFactoryUtil;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory implements ConfigurableListableBeanFactory, BeanDefinitionRegistry {
@@ -66,5 +65,33 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     @Override
     protected boolean containsBeanDefinition(String beanName) {
         return this.beanDefinitionMap.containsKey(beanName);
+    }
+
+    @Override
+    public String[] getBeanNamesForType(Class<?> var1) {
+        List<String> result = new ArrayList<>();
+        beanDefinitionMap.forEach((beanName,beanDefinition)->{
+            if(var1.isAssignableFrom(beanDefinition.getBeanClass())){
+                result.add(beanName);
+            }
+        });
+        return result.toArray(new String[result.size()]);
+    }
+
+    @Override
+    public <T> T getBean(Class<T> requiredType) throws BeansException {
+        List<String> beanNames = new ArrayList<>();
+        for (Map.Entry<String, BeanDefinition> entry : beanDefinitionMap.entrySet()) {
+            Class beanClass = entry.getValue().getBeanClass();
+            if (requiredType.isAssignableFrom(beanClass)) {
+                beanNames.add(entry.getKey());
+            }
+        }
+        if (beanNames.size() == 1) {
+            return getBean(beanNames.get(0), requiredType);
+        }
+
+        throw new BeansException(requiredType + "expected single bean but found " +
+                beanNames.size() + ": " + beanNames);
     }
 }

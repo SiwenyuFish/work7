@@ -4,8 +4,9 @@ import com.spring.web.annotation.RequestParam;
 import com.spring.web.servlet.method.MethodParameter;
 import com.spring.web.servlet.method.support.HandlerMethodArgumentResolver;
 
+
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 
 public class RequestParamArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
@@ -29,5 +30,6 @@ public class RequestParamArgumentResolver implements HandlerMethodArgumentResolv
         }
         // 其他类型可以依次添加处理
         return null;
+
     }
 }

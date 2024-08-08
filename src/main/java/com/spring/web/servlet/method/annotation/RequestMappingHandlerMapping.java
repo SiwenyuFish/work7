@@ -1,7 +1,6 @@
 package com.spring.web.servlet.method.annotation;
 
 import com.spring.web.annotation.*;
-import com.spring.web.servlet.HandlerMapping;
 import com.spring.web.servlet.handler.AbstractHandlerMethodMapping;
 import com.spring.web.servlet.method.HandlerMethod;
 import com.spring.web.servlet.HandlerExecutionChain;
@@ -14,12 +13,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping {
-    private final Map<String, HandlerMethod> handlerMethods = new HashMap<>();
+
+    private static Map<String, HandlerMethod> handlerMethods = new HashMap<>();
 
     public RequestMappingHandlerMapping() {
         // 扫描所有控制器，找到@RequestMapping注解的方法并注册
-        detectHandlers("com.spring.web.controller");
-        detectHandlers("spring.web.controller");
+        //detectHandlers("com.spring.web.controller");
+        //detectHandlers("spring.web.controller");
     }
 
     private void detectHandlers(String basePackage) {
@@ -58,7 +58,7 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping {
         }
     }
 
-    private void checkAndRegisterDerivedAnnotations(Method method, Class<?> clazz) throws Exception {
+    protected void checkAndRegisterDerivedAnnotations(Method method, Class<?> clazz) throws Exception {
         if (method.isAnnotationPresent(GetMapping.class)) {
             GetMapping annotation = method.getAnnotation(GetMapping.class);
             registerHandlerMethod(method, new String[]{annotation.value()}, "GET", clazz);
@@ -77,12 +77,14 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping {
     private void registerHandlerMethod(Method method, String[] paths, String methodType, Class<?> clazz) throws Exception {
         String path = paths.length > 0 ? paths[0] : ""; // 使用第一个路径
         handlerMethods.put(path, new HandlerMethod(clazz.newInstance(), method));
+        System.out.println(handlerMethods);
     }
 
-    private void registerHandlerMethod(Method method, RequestMapping requestMapping) throws Exception {
+    protected void registerHandlerMethod(Method method, RequestMapping requestMapping) throws InstantiationException, IllegalAccessException {
         String path = requestMapping.value().length > 0 ? requestMapping.value()[0] : "";
         String methodType = requestMapping.method().length > 0 ? requestMapping.method()[0] : "";
         handlerMethods.put(path, new HandlerMethod(method.getDeclaringClass().newInstance(), method));
+        System.out.println(handlerMethods);
     }
 
     @Override
@@ -90,6 +92,7 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping {
         String path = request.getRequestURI();
         String methodType = request.getMethod();
         HandlerMethod handlerMethod = handlerMethods.get(path);
+        System.out.println(handlerMethods);
         if (handlerMethod != null) {
             return new HandlerExecutionChain(handlerMethod);
         }

@@ -1,19 +1,22 @@
 package com.spring.web.servlet.method;
 
-import com.spring.web.annotation.ResponseBody;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 public class MethodParameter {
     private final Method method;
-    private final Parameter parameter;
-    private final int parameterIndex;
+    private Parameter parameter;
+    private int parameterIndex;
 
     public MethodParameter(Method method, int parameterIndex) {
         this.method = method;
         this.parameter = method.getParameters()[parameterIndex];
         this.parameterIndex = parameterIndex;
+    }
+
+    public MethodParameter(Method method) {
+        this.method = method;
     }
 
     public Method getMethod() {
@@ -30,6 +33,10 @@ public class MethodParameter {
 
     public Class<?> getParameterType() {
         return parameter.getType();
+    }
+
+    public Class<?> getReturnType() {
+        return method.getReturnType();
     }
 
     public boolean hasParameterAnnotation(Class<? extends java.lang.annotation.Annotation> annotationType) {

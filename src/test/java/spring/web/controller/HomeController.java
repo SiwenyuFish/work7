@@ -1,7 +1,6 @@
 package spring.web.controller;
 
 import com.spring.web.annotation.*;
-import spring.bean.Fish;
 import spring.bean.User;
 
 @Controller
@@ -13,8 +12,8 @@ public class HomeController {
     }
 
     @GetMapping("/kobe")
-    public String hello(@RequestParam("name") String name) {
-        return "see you again, " + name;
+    public String hello(@RequestParam("name") String name,@RequestParam("number")Integer number) {
+        return "see you again, " + name + number;
     }
 
     @GetMapping("/users/{id}")

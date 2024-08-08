@@ -9,6 +9,7 @@ import com.spring.core.beans.factory.config.SingletonBeanRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements SingletonBeanRegistry, HierarchicalBeanFactory {
 
@@ -53,13 +54,9 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     @Override
     public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
-        return null;
+        return ((T) getBean(name));
     }
 
-    @Override
-    public <T> T getBean(Class<T> requiredType) throws BeansException {
-        return null;
-    }
 
     @Override
     public boolean containsBean(String name) {
@@ -90,4 +87,10 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     public void setParentBeanFactory(BeanFactory parentBeanFactory) {
         this.parentBeanFactory = parentBeanFactory;
     }
+
+    @Override
+    public boolean containsLocalBean(String beanName) {
+        return (this.containsSingleton(beanName) || this.containsBeanDefinition(beanName));
+    }
+
 }

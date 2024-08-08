@@ -7,6 +7,7 @@ import com.spring.core.beans.factory.BeanFactory;
 import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
 import com.spring.core.beans.factory.config.BeanFactoryPostProcessor;
 import com.spring.core.beans.factory.config.BeanPostProcessor;
+import com.spring.core.beans.factory.support.DefaultListableBeanFactory;
 import com.spring.core.io.DefaultResourceLoader;
 
 import java.util.Map;
@@ -101,7 +102,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 
     @Override
     public BeanFactory getParentBeanFactory() {
-        return this.getParent();
+        return this.getBeanFactory().getParentBeanFactory();
     }
 
     @Override
@@ -111,5 +112,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 
     public void setParent(ApplicationContext parent) {
         this.parent = parent;
+        if(parent instanceof GenericApplicationContext){
+            ((DefaultListableBeanFactory) this.getBeanFactory()).setParentBeanFactory( ((GenericApplicationContext) parent).getBeanFactory());
+        }
     }
+
+    public boolean containsLocalBean(String name) {
+        return this.getBeanFactory().containsLocalBean(name);
+    }
+
+
 }

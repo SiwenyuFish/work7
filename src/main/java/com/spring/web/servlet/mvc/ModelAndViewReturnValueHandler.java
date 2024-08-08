@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ModelAndViewReturnValueHandler implements HandlerMethodReturnValueHandler {
     @Override
     public boolean supportsReturnType(MethodParameter returnType) {
-        return ModelAndView.class.isAssignableFrom(returnType.getParameterType());
+        return ModelAndView.class.isAssignableFrom(returnType.getReturnType());
     }
 
     @Override

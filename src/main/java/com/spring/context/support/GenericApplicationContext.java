@@ -48,4 +48,9 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         this.beanFactory.addBeanPostProcessor(beanPostProcessor);
     }
+
+    @Override
+    public String[] getBeanNamesForType(Class<?> var1) {
+        return this.beanFactory.getBeanNamesForType(var1);
+    }
 }

@@ -3,9 +3,8 @@ package com.spring.web.servlet.method.annotation;
 import com.spring.web.annotation.PathVariable;
 import com.spring.web.servlet.method.MethodParameter;
 import com.spring.web.servlet.method.support.HandlerMethodArgumentResolver;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 
 
 public class PathVariableArgumentResolver implements HandlerMethodArgumentResolver {
