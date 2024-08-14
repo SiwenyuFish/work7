@@ -5,9 +5,6 @@ import com.spring.aop.annotation.Advisor;
 import com.spring.aop.annotation.After;
 import com.spring.aop.annotation.Aspect;
 import com.spring.aop.annotation.Before;
-
-
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +28,9 @@ public class ProxyFactory {
 
     public Object getProxy() {
         if (target.getClass().getInterfaces().length > 0) {
-            System.out.println("jdk");
             // 使用JDK动态代理
             return new JdkDynamicAopProxy(this).getProxy();
         } else {
-            System.out.println("cglib");
             // 使用CGLIB动态代理
             return new CglibDynamicAopProxy(this).getProxy();
         }

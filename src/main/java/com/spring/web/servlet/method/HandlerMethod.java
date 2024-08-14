@@ -11,7 +11,7 @@ public class HandlerMethod {
         try {
             this.method = controller.getClass().getMethod(methodName, parameterTypes);
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Invalid method name or parameters", e);
+            throw new IllegalArgumentException("无效的方法名或参数", e);
         }
     }
 

@@ -10,6 +10,7 @@ public class CircularConfig {
     public CircularBeanA circularBeanA(CircularBeanB b){
         CircularBeanA circularBeanA = new CircularBeanA();
         circularBeanA.setCircularBeanB(b);
+
         return circularBeanA;
     }
 
@@ -17,6 +18,7 @@ public class CircularConfig {
     public CircularBeanB circularBeanB(CircularBeanA a){
         CircularBeanB circularBeanB = new CircularBeanB();
         circularBeanB.setCircularBeanA(a);
+
         return circularBeanB;
     }
 

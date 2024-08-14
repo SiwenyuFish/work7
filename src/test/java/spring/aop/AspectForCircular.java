@@ -16,4 +16,14 @@ public class AspectForCircular {
     public void afterAdvice() {
         System.out.println("After annotation");
     }
+
+    @Before("execution(* spring.bean.CircularBeanB.*(..))")
+    public void beforeAdvice2() {
+        System.out.println("Before annotation2");
+    }
+    @After("execution(* spring.bean.CircularBeanB.*(..))")
+    public void afterAdvice2() {
+        System.out.println("After annotation2");
+    }
+
 }

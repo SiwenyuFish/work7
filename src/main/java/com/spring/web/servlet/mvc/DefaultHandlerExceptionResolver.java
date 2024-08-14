@@ -12,6 +12,7 @@ public class DefaultHandlerExceptionResolver implements HandlerExceptionResolver
         try {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
             String errorMessage = "{\"error\": \"" + ex.getMessage() + "\"}";
             response.getWriter().write(errorMessage);
         } catch (Exception e) {

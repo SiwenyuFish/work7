@@ -6,20 +6,25 @@ import com.spring.core.beans.BeansException;
 import com.spring.core.beans.factory.BeanFactory;
 import com.spring.core.beans.factory.BeanFactoryAware;
 import com.spring.core.beans.factory.config.BeanDefinition;
-import com.spring.core.beans.factory.config.InstantiationAwareBeanPostProcessor;
+import com.spring.core.beans.factory.config.BeanPostProcessor;
 import com.spring.core.beans.factory.support.DefaultListableBeanFactory;
+import com.spring.jdbc.TransactionInterceptor;
+import com.spring.jdbc.TransactionManager;
+import com.spring.jdbc.Transactional;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 
+import javax.sql.DataSource;
+import java.lang.reflect.Method;
+import java.sql.DriverManager;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 
-public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPostProcessor, BeanFactoryAware {
+
+public class DefaultAdvisorAutoProxyCreator implements BeanPostProcessor, BeanFactoryAware {
 
     private DefaultListableBeanFactory beanFactory;
 
-    private Set<Object> earlyProxyReferences = new HashSet<>();
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -28,24 +33,30 @@ public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPos
 
 
     @Override
-    public Object getEarlyBeanReference(Object bean, String beanName) throws BeansException {
-        earlyProxyReferences.add(beanName);
-        return wrapIfNecessary(bean, beanName);
-    }
-
-    @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        if (!earlyProxyReferences.contains(beanName)) {
             return wrapIfNecessary(bean, beanName);
-        }
-        return bean;
     }
 
     protected Object wrapIfNecessary(Object bean, String beanName) {
+
         //避免死循环
         if (isInfrastructureClass(bean.getClass())||bean.getClass().isAnnotationPresent(Aspect.class)) {
             return bean;
         }
+
+        for (Method declaredMethod : bean.getClass().getDeclaredMethods()) {
+            if(declaredMethod.isAnnotationPresent(Transactional.class)){
+                BasicDataSource dataSource = new BasicDataSource();
+                dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+                dataSource.setUrl("jdbc:mysql://localhost:3306/spring");
+                dataSource.setUsername("root");
+                dataSource.setPassword("297710");
+                ProxyFactory proxyFactory = new ProxyFactory(bean,new TransactionInterceptor(bean,new TransactionManager(dataSource)));
+                return proxyFactory.getProxy();
+            }
+        }
+
+
         ProxyFactory proxyFactory = new ProxyFactory(bean);
 
         for (String beanDefinitionName : beanFactory.getBeanDefinitionNames()) {
@@ -70,8 +81,6 @@ public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPos
                 }
             }
             if(!proxyFactory.getAdvisors().isEmpty()){
-                //若Advisors不为空则创建代理
-                //System.out.println(proxyFactory.getAdvisors().size());
                 return proxyFactory.getProxy();
             }
             return bean;

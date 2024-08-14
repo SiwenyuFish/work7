@@ -1,6 +1,5 @@
 package spring.context;
 
-import com.spring.aop.DefaultAdvisorAutoProxyCreator;
 import com.spring.context.support.BeanAnnotationBeanPostProcessor;
 import com.spring.context.support.GenericApplicationContext;
 import org.junit.Test;
@@ -21,7 +20,7 @@ public class GenericApplicationContextTest {
         System.out.println(cat);
         Fish fish = (Fish) context.getBean("fish");
         System.out.println(fish);
-        context.registerShutdownHook();
+        context.close();
     }
 
 

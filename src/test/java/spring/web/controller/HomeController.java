@@ -24,7 +24,23 @@ public class HomeController {
     @GetMapping("/uu/{id}")
     @ResponseBody
     public User uu(@PathVariable("id") int id) {
-        return new User("Dr",id); // 这将被JsonReturnValueHandler处理
+        return new User("Dr",id);
+    }
+
+    @RequestMapping("/auth")
+    public String auth(@RequestHeader("Authorization")String header) {
+        return "request header is :"+header;
+    }
+
+    @GetMapping("/cookie")
+    public String cookie(@CookieValue("test")String cookie) {
+        return "cookie is :"+cookie;
+    }
+
+
+    @PostMapping("/test/request")
+    public String testRequestBody(@RequestBody User uu) {
+        return uu.toString();
     }
 
 }

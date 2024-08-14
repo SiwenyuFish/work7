@@ -9,9 +9,6 @@ import java.lang.reflect.Proxy;
 
 public class AwareTest {
 
-
-
-
     @Test
     public void testAware(){
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Config3.class);

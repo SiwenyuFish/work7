@@ -10,10 +10,8 @@ import java.util.List;
 
 public class BeanFactoryUtil {
 
-
-
     public static String[] beanNamesForTypeIncludingAncestors(ListableBeanFactory lbf, Class<?> type) {
-        Assert.notNull(lbf, "ListableBeanFactory must not be null");
+        Assert.notNull(lbf, "ListableBeanFactory不能为空");
         String[] result = lbf.getBeanNamesForType(type);
         if (lbf instanceof HierarchicalBeanFactory) {
             HierarchicalBeanFactory hbf = (HierarchicalBeanFactory)lbf;

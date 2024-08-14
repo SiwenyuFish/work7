@@ -24,9 +24,29 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
     }
 
     @Override
+    public BeanFactory getParentBeanFactory() {
+        return this.getBeanFactory().getParentBeanFactory();
+    }
+
+    @Override
+    public ApplicationContext getParent() {
+        return this.parent;
+    }
+
+    public void setParent(ApplicationContext parent) {
+        this.parent = parent;
+        if(parent instanceof GenericApplicationContext){
+            ((DefaultListableBeanFactory) this.getBeanFactory()).setParentBeanFactory( ((GenericApplicationContext) parent).getBeanFactory());
+        }
+    }
+
+    public boolean containsLocalBean(String name) {
+        return this.getBeanFactory().containsLocalBean(name);
+    }
+
+    @Override
     public void refresh() throws BeansException, IllegalStateException{
 
-        refreshBeanFactory();
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
         beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 
@@ -56,7 +76,6 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         }
     }
 
-    protected abstract void refreshBeanFactory();
 
 
     @Override
@@ -91,7 +110,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 
     public abstract ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException;
 
-    public void registerShutdownHook() {
+    public void close() {
         Thread shutdownHook = new Thread() {
             public void run() {
                 getBeanFactory().destroySingletons();
@@ -100,26 +119,6 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 
-    @Override
-    public BeanFactory getParentBeanFactory() {
-        return this.getBeanFactory().getParentBeanFactory();
-    }
-
-    @Override
-    public ApplicationContext getParent() {
-        return this.parent;
-    }
-
-    public void setParent(ApplicationContext parent) {
-        this.parent = parent;
-        if(parent instanceof GenericApplicationContext){
-            ((DefaultListableBeanFactory) this.getBeanFactory()).setParentBeanFactory( ((GenericApplicationContext) parent).getBeanFactory());
-        }
-    }
-
-    public boolean containsLocalBean(String name) {
-        return this.getBeanFactory().containsLocalBean(name);
-    }
 
 
 }

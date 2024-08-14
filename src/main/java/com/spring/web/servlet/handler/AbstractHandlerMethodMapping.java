@@ -1,10 +1,10 @@
 package com.spring.web.servlet.handler;
 
-import com.spring.aop.annotation.Aspect;
 import com.spring.context.config.ApplicationContext;
 import com.spring.context.config.ApplicationContextAware;
 import com.spring.context.support.GenericApplicationContext;
 import com.spring.core.beans.BeansException;
+import com.spring.core.beans.factory.annotation.Component;
 import com.spring.core.beans.factory.config.BeanDefinition;
 import com.spring.core.beans.factory.config.InitializingBean;
 import com.spring.core.beans.factory.util.BeanFactoryUtil;
@@ -19,6 +19,7 @@ public abstract class AbstractHandlerMethodMapping implements InitializingBean ,
 
     private GenericApplicationContext applicationContext;
 
+    @Override
     public void afterPropertiesSet() {
         this.initHandlerMethods();
     }
@@ -34,7 +35,7 @@ public abstract class AbstractHandlerMethodMapping implements InitializingBean ,
             BeanDefinition beanDefinition = applicationContext.getBeanFactory().getBeanDefinition(beanDefinitionName);
             try {
                 Class<?> clazz = beanDefinition.getBeanClass();
-                if (clazz.isAnnotationPresent(Controller.class)) {
+                if (clazz.isAnnotationPresent(Controller.class)|| clazz.isAnnotationPresent(Component.class)) {
                     for (Method method : clazz.getDeclaredMethods()) {
                         // 检查是否有 @RequestMapping 注解
                         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);

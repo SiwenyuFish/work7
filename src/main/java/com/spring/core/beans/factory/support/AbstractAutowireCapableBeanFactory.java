@@ -8,9 +8,15 @@ import com.spring.core.beans.PropertyValue;
 import com.spring.core.beans.factory.AutowiredCapableBeanFactory;
 import com.spring.core.beans.factory.BeanFactory;
 import com.spring.core.beans.factory.BeanFactoryAware;
+import com.spring.core.beans.factory.annotation.Autowired;
+import com.spring.core.beans.factory.annotation.Value;
 import com.spring.core.beans.factory.config.*;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Properties;
 
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowiredCapableBeanFactory {
 
@@ -27,21 +33,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     @Override
     protected Object createBean(String beanName, BeanDefinition beanDefinition) throws BeansException {
-        return doCreateBean(beanName, beanDefinition);
-    }
-
-    protected Object doCreateBean(String beanName, BeanDefinition beanDefinition) {
         Object bean = null;
         try {
             bean = createBeanInstance(beanDefinition);
 
-            //为解决循环依赖问题，将实例化后的bean放进缓存中提前暴露
             if (beanDefinition.isSingleton()) {
-                Object finalBean = bean;
-                addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, beanDefinition, finalBean));
+                earlySingletonObjects.put(beanName, bean);
             }
 
+            //Autowired处理
+            populate(bean);
+
             applyPropertyValues(beanName,bean,beanDefinition);
+
             bean = initializeBean(beanName,bean,beanDefinition);
 
         } catch (Exception e) {
@@ -49,33 +53,56 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
 
         if(beanDefinition.isSingleton()) {
-            //只有单例才注册销毁方法
             registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
-            //registerSingleton(beanName, bean);
+            //放入一级缓存
+            registerSingleton(beanName, bean);
         }
 
-        Object exposedObject = bean;
-
-        if (beanDefinition.isSingleton()) {
-            //如果有代理对象，此处获取代理对象
-            exposedObject = getSingleton(beanName);
-            registerSingleton(beanName, exposedObject);
-        }
-        return exposedObject;
+        return bean;
     }
 
-    protected Object getEarlyBeanReference(String beanName, BeanDefinition beanDefinition, Object bean) {
-        Object exposedObject = bean;
-        for (BeanPostProcessor bp : getBeanPostProcessors()) {
-            if (bp instanceof InstantiationAwareBeanPostProcessor) {
-                exposedObject = ((InstantiationAwareBeanPostProcessor) bp).getEarlyBeanReference(exposedObject, beanName);
-                if (exposedObject == null) {
-                    return exposedObject;
+    private void populate(Object bean) throws IllegalAccessException {
+
+        Class<?> clazz = bean.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+
+        for (Field field : fields) {
+
+            if(field.isAnnotationPresent(Value.class)) {
+
+                Value valueAnnotation = field.getAnnotation(Value.class);
+                String propertyKey = valueAnnotation.value().replace("${", "").replace("}", "");
+
+                Properties properties = new Properties();
+
+                try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+                    if (input != null) {
+                        properties.load(input);
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+                String propertyValue = properties.getProperty(propertyKey);
+
+                if (propertyValue != null) {
+                    field.setAccessible(true);
+                    field.set(bean, propertyValue);
                 }
             }
         }
 
-        return exposedObject;
+        for (Field field : fields) {
+            if(field.isAnnotationPresent(Autowired.class)) {
+                Class<?> fieldType = field.getType();
+                Object bean1 = getBean(fieldType);
+                if(bean1!=null) {
+                    field.setAccessible(true);
+                    field.set(bean, bean1);
+                }
+            }
+        }
+
     }
 
     protected void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
@@ -144,9 +171,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     BeanReference beanReference = (BeanReference) value;
                     value = getBean(beanReference.getBeanName());
                 }
-
-                //通过反射设置属性
-                BeanUtil.setFieldValue(bean, name, value);
+                if(value!=null)
+                    BeanUtil.setFieldValue(bean, name, value);
             }
         } catch (Exception ex) {
             throw new BeansException("错误设置bean" + beanName + "的属性", ex);

@@ -18,6 +18,19 @@ public class CircularReferenceTest {
         CircularBeanB circularBeanB = (CircularBeanB) ctx.getBean("circularBeanB");
         circularBeanA.aaa();
         circularBeanB.bbb();
+    }
+
+    @Test
+    public void testCircularReference2(){
+
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(CircularConfig.class);
+
+        CircularBeanA circularBeanA = (CircularBeanA) ctx.getBean("circularBeanA");
+        CircularBeanB circularBeanB = (CircularBeanB) ctx.getBean("circularBeanB");
+
+        System.out.println(circularBeanA);
+        System.out.println(circularBeanB);
 
     }
+
 }

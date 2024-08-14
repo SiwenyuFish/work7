@@ -33,7 +33,7 @@ public class DisposableBeanAdapter implements DisposableBean {
             //执行自定义方法
             Method destroyMethod = ClassUtil.getPublicMethod(bean.getClass(), destroyMethodName);
             if (destroyMethod == null) {
-                throw new BeansException("Couldn't find a destroy method named '" + destroyMethodName + "' on bean with name '" + beanName + "'");
+                throw new BeansException("找不到"+ beanName +"中名为" + destroyMethodName + "的销毁方法");
             }
             destroyMethod.invoke(bean);
         }

@@ -30,7 +30,8 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
         if (resolver != null) {
             return resolver.resolveArgument(parameter, request);
         }
-        throw new IllegalArgumentException("No suitable resolver for parameter: " + parameter.getParameter().getName());
+        throw new IllegalArgumentException("对于参数: " + parameter.getParameter().getName()+"没有合适的解析器");
+
     }
 
     private HandlerMethodArgumentResolver getResolver(MethodParameter parameter) {

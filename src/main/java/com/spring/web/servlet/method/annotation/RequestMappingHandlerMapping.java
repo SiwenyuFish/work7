@@ -77,22 +77,20 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping {
     private void registerHandlerMethod(Method method, String[] paths, String methodType, Class<?> clazz) throws Exception {
         String path = paths.length > 0 ? paths[0] : ""; // 使用第一个路径
         handlerMethods.put(path, new HandlerMethod(clazz.newInstance(), method));
-        System.out.println(handlerMethods);
+        //System.out.println(handlerMethods);
     }
 
     protected void registerHandlerMethod(Method method, RequestMapping requestMapping) throws InstantiationException, IllegalAccessException {
         String path = requestMapping.value().length > 0 ? requestMapping.value()[0] : "";
-        String methodType = requestMapping.method().length > 0 ? requestMapping.method()[0] : "";
         handlerMethods.put(path, new HandlerMethod(method.getDeclaringClass().newInstance(), method));
-        System.out.println(handlerMethods);
+        //System.out.println(handlerMethods);
     }
 
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) {
         String path = request.getRequestURI();
-        String methodType = request.getMethod();
         HandlerMethod handlerMethod = handlerMethods.get(path);
-        System.out.println(handlerMethods);
+        //System.out.println(handlerMethods);
         if (handlerMethod != null) {
             return new HandlerExecutionChain(handlerMethod);
         }

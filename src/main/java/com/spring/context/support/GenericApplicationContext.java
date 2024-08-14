@@ -40,9 +40,6 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
         return this.beanFactory;
     }
 
-    @Override
-    protected void refreshBeanFactory() {
-    }
 
     @Override
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {

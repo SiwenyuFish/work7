@@ -31,6 +31,9 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         // 添加参数解析器
         argumentResolvers.addResolver(new RequestParamArgumentResolver());
         argumentResolvers.addResolver(new PathVariableArgumentResolver());
+        argumentResolvers.addResolver(new RequestHeaderMethodArgumentResolver());
+        argumentResolvers.addResolver(new ServletCookieValueMethodArgumentResolver());
+        argumentResolvers.addResolver(new RequestResponseBodyMethodProcessor());
         // 添加返回值解析器
         returnValueHandlers.addHandler(new ModelAndViewReturnValueHandler());
         returnValueHandlers.addHandler(new RequestResponseBodyMethodProcessor());

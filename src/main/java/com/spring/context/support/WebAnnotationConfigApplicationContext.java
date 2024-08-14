@@ -1,13 +1,12 @@
 package com.spring.context.support;
 
-import com.spring.context.annotation.AnnotationConfigRegistry;
 import com.spring.web.tomcat.TomcatServer;
 import org.apache.catalina.LifecycleException;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 
-public class WebAnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {
+public class WebAnnotationConfigApplicationContext extends AnnotationConfigApplicationContext {
 
     private final TomcatServer tomcatServer = new TomcatServer();
 
@@ -22,11 +21,4 @@ public class WebAnnotationConfigApplicationContext extends GenericApplicationCon
         tomcatServer.start();
     }
 
-    @Override
-    public void register(Class<?>... componentClasses) {
-        this.registerBean(BeanAnnotationBeanPostProcessor.class);
-        for (Class<?> componentClass : componentClasses) {
-            this.registerBean(componentClass);
-        }
-    }
 }

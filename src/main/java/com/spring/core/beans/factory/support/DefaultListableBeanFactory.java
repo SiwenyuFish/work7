@@ -5,7 +5,6 @@ import com.spring.core.beans.factory.BeanFactory;
 import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
 import com.spring.core.beans.factory.config.BeanDefinition;
 import com.spring.core.beans.factory.config.BeanDefinitionRegistry;
-import com.spring.core.beans.factory.util.BeanFactoryUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -91,7 +90,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             return getBean(beanNames.get(0), requiredType);
         }
 
-        throw new BeansException(requiredType + "expected single bean but found " +
-                beanNames.size() + ": " + beanNames);
+        throw new BeansException("找到了数量为 " +
+                beanNames.size()+ requiredType  + "类型的bean: " + beanNames);
     }
 }

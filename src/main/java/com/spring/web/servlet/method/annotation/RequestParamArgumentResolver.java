@@ -20,7 +20,7 @@ public class RequestParamArgumentResolver implements HandlerMethodArgumentResolv
         String paramName = requestParam.value();
         String paramValue = request.getParameter(paramName);
         if (paramValue == null && requestParam.required()) {
-            throw new IllegalArgumentException("Missing required request parameter: " + paramName);
+            throw new IllegalArgumentException("找不到需要的请求参数: " + paramName);
         }
         Class<?> paramType = parameter.getParameterType();
         if (paramType == String.class) {

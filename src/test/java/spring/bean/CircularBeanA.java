@@ -12,4 +12,12 @@ public class CircularBeanA {
     public void setCircularBeanB(CircularBeanB circularBeanB) {
         this.circularBeanB = circularBeanB;
     }
+
+
+    @Override
+    public String toString() {
+        return "CircularBeanA{" +
+                "circularBeanB=" + circularBeanB +
+                '}';
+    }
 }

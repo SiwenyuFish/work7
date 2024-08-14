@@ -6,6 +6,7 @@ import com.spring.core.beans.PropertyValue;
 import com.spring.core.beans.PropertyValues;
 import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
 import com.spring.core.beans.factory.annotation.Bean;
+import com.spring.core.beans.factory.annotation.Component;
 import com.spring.core.beans.factory.annotation.Configuration;
 import com.spring.core.beans.factory.config.BeanDefinition;
 import com.spring.core.beans.factory.config.BeanFactoryPostProcessor;
@@ -24,11 +25,11 @@ public class BeanAnnotationBeanPostProcessor implements BeanFactoryPostProcessor
             BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);
             try {
                 Class<?> beanClass = beanDefinition.getBeanClass();
-                if (beanClass.isAnnotationPresent(Configuration.class)) {
-                    processBeanDefinitions(beanFactory,beanClass);
-                }
+
+                processBeanDefinitions(beanFactory,beanClass);
+
             } catch (Exception e) {
-                System.out.println("Annotation Exception");
+                System.out.println("处理Configuration异常");
             }
         }
     }
@@ -37,7 +38,7 @@ public class BeanAnnotationBeanPostProcessor implements BeanFactoryPostProcessor
         try {
             for (Class<?> configClass : configClasses) {
 
-                if (!configClass.isAnnotationPresent(Configuration.class)) {
+                if (!configClass.isAnnotationPresent(Configuration.class)&&!configClass.isAnnotationPresent(Component.class)) {
                     continue;
                 }
 
