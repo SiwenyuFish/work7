@@ -48,6 +48,7 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     public void refresh() throws BeansException, IllegalStateException{
 
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+
         beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 
         //在bean实例化之前，执行BeanFactoryPostProcessor
@@ -56,7 +57,7 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
         //BeanPostProcessor需要提前与其他bean实例化之前注册
         registerBeanPostProcessors(beanFactory);
 
-        //提前实例化单例bean
+        //循环getBean
         beanFactory.preInstantiateSingletons();
 
 

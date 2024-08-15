@@ -68,7 +68,5 @@ public class BeanDefinition {
     public boolean isSingleton() {
         return singleton;
     }
-    public boolean isPrototype() {
-        return prototype;
-    }
+
 }

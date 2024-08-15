@@ -102,8 +102,6 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 if(bean1!=null) {
                     field.setAccessible(true);
                     field.set(bean, bean1);
-                    System.out.println(bean1+"zhuru");
-                    System.out.println(bean+"被注入");
                 }
             }
         }
@@ -127,7 +125,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             ((BeanNameAware) bean).setBeanName(beanName);
         }
 
-        //执行BeanPostProcessor的前置处理
+        //BeanPostProcessor的前置处理
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
 
 
@@ -137,7 +135,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throw new BeansException("初始化"+beanName+"失败");
         }
 
-        //执行BeanPostProcessor的后置处理
+        //BeanPostProcessor的后置处理
         wrappedBean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
         return wrappedBean;
 
@@ -149,7 +147,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
         String initMethodName = beanDefinition.getInitMethodName();
 
-        //自定义的初始化方法在实现了InitializingBean接口的情况下不能与afterPropertiesSet重名
+        //自定义的初始化方法不能与afterPropertiesSet重名
         if (StrUtil.isNotEmpty(initMethodName) && !(wrappedBean instanceof InitializingBean && "afterPropertiesSet".equals(initMethodName))) {
             Method initMethod = ClassUtil.getPublicMethod(beanDefinition.getBeanClass(), initMethodName);
             if (initMethod == null) {

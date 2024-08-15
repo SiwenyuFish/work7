@@ -22,13 +22,4 @@ public class PropertyValues {
         this.propertyValueList.add(pv);
     }
 
-    public PropertyValue getPropertyValue(String propertyName) {
-        for (int i = 0; i < this.propertyValueList.size(); i++) {
-            PropertyValue propertyValue = this.propertyValueList.get(i);
-            if (propertyValue.getName().equals(propertyName)) {
-                return propertyValue;
-            }
-        }
-        return null;
-    }
 }
