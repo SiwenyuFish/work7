@@ -13,9 +13,8 @@ public class PropertyValues {
 
     public void addPropertyValue(PropertyValue pv) {
         for (int i = 0; i < this.propertyValueList.size(); i++) {
-            PropertyValue currentPv = this.propertyValueList.get(i);
-            if (currentPv.getName().equals(pv.getName())) {
-                //覆盖原有的属性值
+            PropertyValue value = this.propertyValueList.get(i);
+            if (value.getName().equals(pv.getName())) {
                 this.propertyValueList.set(i, pv);
                 return;
             }
