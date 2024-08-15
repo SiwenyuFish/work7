@@ -2,21 +2,19 @@ package com.spring.aop;
 
 import com.spring.aop.annotation.Advisor;
 import com.spring.aop.annotation.Aspect;
-import com.spring.core.beans.BeansException;
-import com.spring.core.beans.factory.BeanFactory;
-import com.spring.core.beans.factory.BeanFactoryAware;
-import com.spring.core.beans.factory.config.BeanDefinition;
-import com.spring.core.beans.factory.config.BeanPostProcessor;
-import com.spring.core.beans.factory.support.DefaultListableBeanFactory;
+import com.spring.core.BeansException;
+import com.spring.core.factory.BeanFactory;
+import com.spring.core.factory.BeanFactoryAware;
+import com.spring.core.factory.config.BeanDefinition;
+import com.spring.core.factory.config.BeanPostProcessor;
+import com.spring.core.factory.support.DefaultListableBeanFactory;
 import com.spring.jdbc.TransactionInterceptor;
 import com.spring.jdbc.TransactionManager;
 import com.spring.jdbc.Transactional;
-import org.apache.commons.dbcp2.BasicDataSource;
 
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
-import java.sql.DriverManager;
 import java.util.Collection;
 
 
@@ -46,12 +44,11 @@ public class DefaultAdvisorAutoProxyCreator implements BeanPostProcessor, BeanFa
 
         for (Method declaredMethod : bean.getClass().getDeclaredMethods()) {
             if(declaredMethod.isAnnotationPresent(Transactional.class)){
-                BasicDataSource dataSource = new BasicDataSource();
-                dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-                dataSource.setUrl("jdbc:mysql://localhost:3306/spring");
-                dataSource.setUsername("root");
-                dataSource.setPassword("297710");
-                ProxyFactory proxyFactory = new ProxyFactory(bean,new TransactionInterceptor(bean,new TransactionManager(dataSource)));
+
+                TransactionManager transactionManager = beanFactory.getBean(TransactionManager.class);
+
+                ProxyFactory proxyFactory = new ProxyFactory(bean,new TransactionInterceptor(bean,transactionManager));
+
                 return proxyFactory.getProxy();
             }
         }
@@ -94,7 +91,9 @@ public class DefaultAdvisorAutoProxyCreator implements BeanPostProcessor, BeanFa
     private boolean isInfrastructureClass(Class<?> beanClass) {
         return Advice.class.isAssignableFrom(beanClass)
                 || AspectJExpressionPointcut.class.isAssignableFrom(beanClass)
-                || Advisor.class.isAssignableFrom(beanClass);
+                || Advisor.class.isAssignableFrom(beanClass)
+                || TransactionManager.class.isAssignableFrom(beanClass)
+                || DataSource.class.isAssignableFrom(beanClass);
     }
 
     @Override

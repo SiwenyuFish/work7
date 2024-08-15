@@ -2,8 +2,8 @@ package com.spring.context.support;
 
 import com.spring.context.config.ApplicationContext;
 import com.spring.context.config.ApplicationContextAware;
-import com.spring.core.beans.BeansException;
-import com.spring.core.beans.factory.config.BeanPostProcessor;
+import com.spring.core.BeansException;
+import com.spring.core.factory.config.BeanPostProcessor;
 
 public class ApplicationContextAwareProcessor implements BeanPostProcessor {
 

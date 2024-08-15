@@ -1,20 +1,22 @@
 package com.spring.context.support;
 
 import cn.hutool.core.util.StrUtil;
-import com.spring.core.beans.BeansException;
-import com.spring.core.beans.PropertyValue;
-import com.spring.core.beans.PropertyValues;
-import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
-import com.spring.core.beans.factory.annotation.Bean;
-import com.spring.core.beans.factory.annotation.Component;
-import com.spring.core.beans.factory.annotation.Configuration;
-import com.spring.core.beans.factory.config.BeanDefinition;
-import com.spring.core.beans.factory.config.BeanFactoryPostProcessor;
-import com.spring.core.beans.factory.config.BeanReference;
-import com.spring.core.beans.factory.support.DefaultListableBeanFactory;
+import com.spring.boot.ConditionalOnMissingBean;
+import com.spring.core.BeansException;
+import com.spring.core.PropertyValue;
+import com.spring.core.PropertyValues;
+import com.spring.core.factory.ConfigurableListableBeanFactory;
+import com.spring.core.factory.annotation.Bean;
+import com.spring.core.factory.annotation.Component;
+import com.spring.core.factory.annotation.Configuration;
+import com.spring.core.factory.config.BeanDefinition;
+import com.spring.core.factory.config.BeanFactoryPostProcessor;
+import com.spring.core.factory.config.BeanReference;
+import com.spring.core.factory.support.DefaultListableBeanFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 public class BeanAnnotationBeanPostProcessor implements BeanFactoryPostProcessor {
 
@@ -105,6 +107,16 @@ public class BeanAnnotationBeanPostProcessor implements BeanFactoryPostProcessor
                     }
 
                     if (beanFactory instanceof DefaultListableBeanFactory) {
+
+                        //当容器中不存在该bean才注册
+                        if(method.isAnnotationPresent(ConditionalOnMissingBean.class)){
+                            for (String beanDefinitionName : beanFactory.getBeanDefinitionNames()) {
+                                if(Objects.equals(beanDefinitionName, method.getName())){
+                                    return;
+                                }
+                            }
+                        }
+
                         ((DefaultListableBeanFactory) beanFactory).registerBeanDefinition(method.getName(), beanDefinition);
                     }
 

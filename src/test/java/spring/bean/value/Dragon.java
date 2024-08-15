@@ -1,7 +1,7 @@
 package spring.bean.value;
 
-import com.spring.core.beans.factory.annotation.Component;
-import com.spring.core.beans.factory.annotation.Value;
+import com.spring.core.factory.annotation.Component;
+import com.spring.core.factory.annotation.Value;
 
 @Component
 public class Dragon {

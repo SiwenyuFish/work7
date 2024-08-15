@@ -2,17 +2,17 @@ package com.spring.context.support;
 
 import com.spring.context.config.ApplicationContext;
 import com.spring.context.config.ConfigurableApplicationContext;
-import com.spring.core.beans.BeansException;
-import com.spring.core.beans.factory.BeanFactory;
-import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
-import com.spring.core.beans.factory.config.BeanFactoryPostProcessor;
-import com.spring.core.beans.factory.config.BeanPostProcessor;
-import com.spring.core.beans.factory.support.DefaultListableBeanFactory;
-import com.spring.core.io.DefaultResourceLoader;
+import com.spring.core.BeansException;
+import com.spring.core.factory.BeanFactory;
+import com.spring.core.factory.ConfigurableListableBeanFactory;
+import com.spring.core.factory.config.BeanFactoryPostProcessor;
+import com.spring.core.factory.config.BeanPostProcessor;
+import com.spring.core.factory.support.DefaultListableBeanFactory;
+
 
 import java.util.Map;
 
-public abstract class AbstractApplicationContext extends DefaultResourceLoader implements ConfigurableApplicationContext {
+public abstract class AbstractApplicationContext implements ConfigurableApplicationContext {
 
     private ApplicationContext parent;
 

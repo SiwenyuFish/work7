@@ -2,8 +2,8 @@ package com.spring.web.servlet;
 
 import com.spring.context.config.ApplicationContext;
 import com.spring.context.config.ApplicationContextAware;
-import com.spring.core.beans.BeansException;
-import com.spring.core.beans.factory.config.InitializingBean;
+import com.spring.core.BeansException;
+import com.spring.core.factory.config.InitializingBean;
 import com.spring.web.servlet.method.annotation.RequestMappingHandlerMapping;
 import com.spring.web.servlet.method.annotation.RequestMappingHandlerAdapter;
 import com.spring.web.servlet.mvc.DefaultHandlerExceptionResolver;
@@ -101,6 +101,7 @@ public class DispatcherServlet extends HttpServlet implements ApplicationContext
 
             // 2. 处理前拦截器
             if (!handlerChain.applyPreHandle(req, resp)) {
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 

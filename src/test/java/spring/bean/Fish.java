@@ -1,7 +1,7 @@
 package spring.bean;
 
-import com.spring.core.beans.factory.config.DisposableBean;
-import com.spring.core.beans.factory.config.InitializingBean;
+import com.spring.core.factory.config.DisposableBean;
+import com.spring.core.factory.config.InitializingBean;
 
 public class Fish implements InitializingBean, DisposableBean {
 

@@ -5,6 +5,7 @@ import com.spring.aop.MethodInvocation;
 
 import java.lang.reflect.Method;
 
+
 public class TransactionInterceptor implements MethodInterceptor {
 
     private Object target;
@@ -22,16 +23,16 @@ public class TransactionInterceptor implements MethodInterceptor {
         Object[] args = invocation.getArguments();
         Transactional transactional = method.getAnnotation(Transactional.class);
         if (transactional != null) {
-            TransactionDefinition definition = new TransactionDefinition(transactional.propagation());
+
             try {
-                transactionManager.beginTransaction(definition);
+                transactionManager.beginTransaction();
                 Object result = method.invoke(target, args);
-                if (!definition.isNested()) {
-                    transactionManager.commit();
-                }
+                transactionManager.commit();
+                System.out.println("Transaction committed");
                 return result;
             } catch (Exception e) {
                 transactionManager.rollback();
+                System.out.println("Transaction rolled back");
                 throw e;
             }
         } else {

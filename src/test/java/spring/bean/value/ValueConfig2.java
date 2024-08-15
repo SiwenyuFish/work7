@@ -1,7 +1,7 @@
 package spring.bean.value;
 
-import com.spring.core.beans.factory.annotation.Bean;
-import com.spring.core.beans.factory.annotation.Component;
+import com.spring.core.factory.annotation.Bean;
+import com.spring.core.factory.annotation.Component;
 
 @Component
 public class ValueConfig2 {

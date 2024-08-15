@@ -14,6 +14,11 @@ public class HandlerExecutionChain {
         this.interceptors = new ArrayList<>();
     }
 
+    public HandlerExecutionChain(Object handler, List<HandlerInterceptor> interceptors) {
+        this.handler = handler;
+        this.interceptors = interceptors;
+    }
+
     public Object getHandler() {
         return handler;
     }

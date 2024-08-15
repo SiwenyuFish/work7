@@ -22,16 +22,5 @@ public class ModelAndView {
         return viewName;
     }
 
-    public void setViewName(String viewName) {
-        this.viewName = viewName;
-    }
-
-    public Map<String, Object> getModel() {
-        return model;
-    }
-
-    public void addObject(String attributeName, Object attributeValue) {
-        model.put(attributeName, attributeValue);
-    }
 }
 

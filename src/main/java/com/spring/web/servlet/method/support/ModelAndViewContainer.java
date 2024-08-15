@@ -11,40 +11,11 @@ public class ModelAndViewContainer {
     private Object view;
     private boolean isViewResolved = false;
 
-    // 存储模型数据
-    public void addObject(String name, Object value) {
-        this.model.put(name, value);
-    }
-
-    // 获取模型数据
-    public Object getObject(String name) {
-        return this.model.get(name);
-    }
-
-    // 设置视图名
-    public void setViewName(String viewName) {
-        this.view = viewName;
-        this.isViewResolved = true;
-    }
 
     public void setView(Object view) {
         this.view = view;
     }
 
-    // 获取视图名
-    public String getViewName() {
-        return this.view instanceof String ? (String)this.view : null;
-    }
-
-    // 检查视图是否已经解析
-    public boolean isViewResolved() {
-        return this.isViewResolved;
-    }
-
-    // 获取模型数据
-    public Map<String, Object> getModel() {
-        return this.model;
-    }
 
     // 生成 ModelAndView 对象
     public ModelAndView getModelAndView() {

@@ -1,9 +1,10 @@
 package com.spring.context.support;
 
 import com.spring.context.annotation.AnnotationConfigRegistry;
-import com.spring.core.beans.factory.annotation.Component;
-import com.spring.core.beans.factory.annotation.ComponentScan;
-import com.spring.core.beans.factory.annotation.Configuration;
+import com.spring.core.factory.annotation.Component;
+import com.spring.core.factory.annotation.ComponentScan;
+import com.spring.core.factory.annotation.Configuration;
+import com.spring.web.annotation.Controller;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
@@ -56,7 +57,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
                         List<Class<?>> classes = findClasses(directory, packageName);
                         for (Class<?> clazz : classes) {
                             //注册bean到容器中
-                            if (clazz.isAnnotationPresent(Component.class)||clazz.isAnnotationPresent(Configuration.class)) {
+                            if (clazz.isAnnotationPresent(Component.class)||clazz.isAnnotationPresent(Configuration.class)||clazz.isAnnotationPresent(Controller.class)) {
                                 this.registerBean(clazz);
                             }
                         }

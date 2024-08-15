@@ -1,12 +1,5 @@
 package com.spring.web.servlet.method.annotation;
 
-import com.spring.context.config.ApplicationContext;
-import com.spring.context.config.ApplicationContextAware;
-import com.spring.core.beans.BeansException;
-import com.spring.core.beans.factory.BeanFactory;
-import com.spring.core.beans.factory.BeanFactoryAware;
-import com.spring.core.beans.factory.ConfigurableListableBeanFactory;
-import com.spring.core.beans.factory.config.InitializingBean;
 import com.spring.web.servlet.ModelAndView;
 import com.spring.web.servlet.HandlerAdapter;
 import com.spring.web.servlet.method.HandlerMethod;

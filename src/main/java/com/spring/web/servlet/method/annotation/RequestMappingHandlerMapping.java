@@ -1,6 +1,7 @@
 package com.spring.web.servlet.method.annotation;
 
 import com.spring.web.annotation.*;
+import com.spring.web.servlet.HandlerInterceptor;
 import com.spring.web.servlet.handler.AbstractHandlerMethodMapping;
 import com.spring.web.servlet.method.HandlerMethod;
 import com.spring.web.servlet.HandlerExecutionChain;
@@ -9,12 +10,15 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping {
 
-    private static Map<String, HandlerMethod> handlerMethods = new HashMap<>();
+    private Map<String, HandlerMethod> handlerMethods = new HashMap<>();
+    private List<HandlerInterceptor> handlerInterceptors = new ArrayList<>();
 
     public RequestMappingHandlerMapping() {
         // 扫描所有控制器，找到@RequestMapping注解的方法并注册
@@ -58,6 +62,11 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping {
         }
     }
 
+    @Override
+    protected void registerInterceptor(HandlerInterceptor interceptor) {
+        handlerInterceptors.add(interceptor);
+    }
+
     protected void checkAndRegisterDerivedAnnotations(Method method, Class<?> clazz) throws Exception {
         if (method.isAnnotationPresent(GetMapping.class)) {
             GetMapping annotation = method.getAnnotation(GetMapping.class);
@@ -92,7 +101,7 @@ public class RequestMappingHandlerMapping extends AbstractHandlerMethodMapping {
         HandlerMethod handlerMethod = handlerMethods.get(path);
         //System.out.println(handlerMethods);
         if (handlerMethod != null) {
-            return new HandlerExecutionChain(handlerMethod);
+            return new HandlerExecutionChain(handlerMethod, handlerInterceptors);
         }
         return null;
     }

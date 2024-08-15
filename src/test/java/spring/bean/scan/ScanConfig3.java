@@ -1,7 +1,7 @@
 package spring.bean.scan;
 
-import com.spring.core.beans.factory.annotation.Bean;
-import com.spring.core.beans.factory.annotation.Configuration;
+import com.spring.core.factory.annotation.Bean;
+import com.spring.core.factory.annotation.Configuration;
 import spring.bean.Fox;
 
 @Configuration

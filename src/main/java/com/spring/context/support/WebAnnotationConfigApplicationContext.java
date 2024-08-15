@@ -13,12 +13,12 @@ public class WebAnnotationConfigApplicationContext extends AnnotationConfigAppli
     public WebAnnotationConfigApplicationContext(Class<?>... componentClasses) throws ServletException, LifecycleException, IOException {
         this.register(componentClasses);
         this.refresh();
-        tomcatServer.start();
+        tomcatServer.start(this);
     }
 
     public WebAnnotationConfigApplicationContext() throws ServletException, LifecycleException, IOException {
         this.refresh();
-        tomcatServer.start();
+        tomcatServer.start(this);
     }
 
 }

@@ -1,9 +1,9 @@
 package spring.context;
 
-import com.spring.core.beans.PropertyValue;
-import com.spring.core.beans.PropertyValues;
-import com.spring.core.beans.factory.config.BeanDefinition;
-import com.spring.core.beans.factory.support.DefaultListableBeanFactory;
+import com.spring.core.PropertyValue;
+import com.spring.core.PropertyValues;
+import com.spring.core.factory.config.BeanDefinition;
+import com.spring.core.factory.support.DefaultListableBeanFactory;
 import org.junit.Test;
 import spring.bean.Fish;
 

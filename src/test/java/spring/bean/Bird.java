@@ -2,10 +2,10 @@ package spring.bean;
 
 import com.spring.context.config.ApplicationContext;
 import com.spring.context.config.ApplicationContextAware;
-import com.spring.core.beans.BeansException;
-import com.spring.core.beans.factory.BeanFactory;
-import com.spring.core.beans.factory.BeanFactoryAware;
-import com.spring.core.beans.factory.support.BeanNameAware;
+import com.spring.core.BeansException;
+import com.spring.core.factory.BeanFactory;
+import com.spring.core.factory.BeanFactoryAware;
+import com.spring.core.factory.support.BeanNameAware;
 
 public class Bird implements BeanNameAware, BeanFactoryAware , ApplicationContextAware {
 

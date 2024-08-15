@@ -1,8 +1,8 @@
 package spring.bean.autowired;
 
-import com.spring.core.beans.factory.annotation.Autowired;
-import com.spring.core.beans.factory.annotation.Component;
-import com.spring.core.beans.factory.annotation.Value;
+import com.spring.core.factory.annotation.Autowired;
+import com.spring.core.factory.annotation.Component;
+import com.spring.core.factory.annotation.Value;
 import spring.bean.value.Dragon;
 
 @Component
